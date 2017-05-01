@@ -12,7 +12,7 @@ import java.lang.management.ManagementFactory;
  */
 @SpringBootApplication
 public class Application implements CommandLineRunner{
-    private Logger _logger=LoggerFactory.getLogger(getClass());
+    private org.apache.log4j.Logger _logger= org.apache.log4j.Logger.getLogger(Application.class);
 
     public static void main(String[] args) {
 
