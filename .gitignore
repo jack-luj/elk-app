@@ -4,6 +4,7 @@
 *.ipr
 *.iws
 *.log
+*.log.*
 build/
 /src/*/resources/static/lib/
 /*.properties

@@ -1,4 +1,5 @@
 package com.github.jackl;
+import com.github.jackl.http.RequestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -12,7 +13,7 @@ import java.lang.management.ManagementFactory;
  */
 @SpringBootApplication
 public class Application implements CommandLineRunner{
-    private org.apache.log4j.Logger _logger= org.apache.log4j.Logger.getLogger(Application.class);
+    private Logger _logger=LoggerFactory.getLogger(getClass());
 
     public static void main(String[] args) {
 
@@ -23,9 +24,11 @@ public class Application implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
       _logger.info(getProcess());
-        Thread mqttWorker = new Thread(new Worker());
-        mqttWorker.setName("log-worker");
-        mqttWorker.start();
+        RequestClient requestClient=new RequestClient();
+        String url="http://localhost:8099/api/hello";
+        _logger.info("开始请求Url:"+url);
+        _logger.info( requestClient.doRequest(url));
+        _logger.info("结束请求Url:"+url);
 
     }
 
