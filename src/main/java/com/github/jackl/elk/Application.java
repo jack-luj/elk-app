@@ -1,5 +1,6 @@
 package com.github.jackl.elk;
-import com.github.jackl.elk.http.RequestClient;
+import com.github.jackl.elk.core.service.CompanyService;
+import com.github.jackl.elk.proxy.ProxyHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import java.lang.management.ManagementFactory;
 public class Application implements CommandLineRunner{
     private Logger _logger=LoggerFactory.getLogger(getClass());
     @Autowired
-    RequestClient requestClient;
+    CompanyService companyService;
 
     public static void main(String[] args) {
 
@@ -26,11 +27,8 @@ public class Application implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws Exception {
-      _logger.info(getProcess());
-        String url="https://www.baidu.com/";
-        _logger.info("开始请求Url:"+url);
-        _logger.info( requestClient.doGet(url,null));
-        _logger.info("结束请求Url:"+url);
+        _logger.info(getProcess());
+        ProxyHttpClient.getInstance().startCrawl();
 
     }
 

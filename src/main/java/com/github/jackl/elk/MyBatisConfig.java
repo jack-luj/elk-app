@@ -13,7 +13,7 @@ public class MyBatisConfig {
     public MapperScannerConfigurer mapperScannerConfigurer() {
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-        mapperScannerConfigurer.setBasePackage("com.github.jackl.elk.dao");
+        mapperScannerConfigurer.setBasePackage("com.github.jackl.elk.core.dao");
         return mapperScannerConfigurer;
     }
 }

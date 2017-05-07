@@ -1,4 +1,4 @@
-package com.github.jackl.elk.entity;
+package com.github.jackl.elk.core.entity;
 
 /**
  * Created by jackl on 2017/5/7.

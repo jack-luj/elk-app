@@ -1,4 +1,4 @@
-package com.github.jackl.elk.util;
+package com.github.jackl.elk.core.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;

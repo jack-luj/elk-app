@@ -1,4 +1,4 @@
-package com.github.jackl.elk.util;
+package com.github.jackl.elk.core.util;
 
 import org.apache.http.*;
 import org.apache.http.client.CookieStore;
@@ -30,7 +30,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
@@ -51,7 +50,7 @@ import java.util.Random;
  * HttpClient工具类
  */
 public class HttpClientUtil {
-	private static Logger logger= LoggerFactory.getLogger(HttpClientUtil.class);
+	private static org.slf4j.Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
     private static CookieStore cookieStore = new BasicCookieStore();
 	private static CloseableHttpClient httpClient;
 	private final static String userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36";

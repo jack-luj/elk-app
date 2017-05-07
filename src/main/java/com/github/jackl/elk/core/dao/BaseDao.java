@@ -1,4 +1,4 @@
-package com.github.jackl.elk.dao;
+package com.github.jackl.elk.core.dao;
 
 import java.util.List;
 import java.util.Map;
