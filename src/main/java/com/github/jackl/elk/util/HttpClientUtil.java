@@ -1,4 +1,4 @@
-package com.github.jackl.util;
+package com.github.jackl.elk.util;
 
 import org.apache.http.*;
 import org.apache.http.client.CookieStore;

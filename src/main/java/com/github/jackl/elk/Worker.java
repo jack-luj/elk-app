@@ -1,4 +1,4 @@
-package com.github.jackl;
+package com.github.jackl.elk;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

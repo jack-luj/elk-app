@@ -1,3 +1,33 @@
 # Spring settings
 spring:
     profiles.active: dev
+    datasource:
+            type: com.alibaba.druid.pool.DruidDataSource
+            url: jdbc:mysql://127.0.0.1:3306/elk?characterEncoding=utf8&allowMultiQueries=true
+            username: root
+            password: 123456
+            initialSize: 1
+            minIdle: 1
+            maxActive: 10
+            maxWait: 60000
+            timeBetweenEvictionRunsMillis: 60000
+            minEvictableIdleTimeMillis: 30000
+            validationQuery: SELECT 'x'
+            testWhileIdle: true
+            testOnBorrow: true
+            testOnReturn: false
+            #配置监控统计拦截的filters
+            filters: stat
+            #打开PSCache，并且指定每个连接上PSCache的大小
+            poolPreparedStatements: true
+            maxPoolPreparedStatementPerConnectionSize: 20
+    redis:
+        host: 127.0.0.1
+        port: 6379
+        password:
+        database: 0
+        pool:
+            max-idle: 8
+            min-idle: 1
+            max-active: 8
+            max-wait: -1

@@ -1,4 +1,4 @@
-package com.github.jackl.util;
+package com.github.jackl.elk.util;
 
 
 public class Constants {

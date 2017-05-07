@@ -1,42 +1,41 @@
-package com.github.jackl.http;
+package com.github.jackl.elk.http;
 
 import com.alibaba.fastjson.JSON;
-import com.github.jackl.util.HttpClientUtil;
-import org.apache.http.HttpEntity;
+import com.github.jackl.elk.dao.CompanyDao;
+import com.github.jackl.elk.entity.Company;
+import com.github.jackl.elk.util.HttpClientUtil;
+import com.github.jackl.elk.util.RedisUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.cookie.CookieSpecProvider;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.impl.cookie.BestMatchSpecFactory;
-import org.apache.http.impl.cookie.BrowserCompatSpecFactory;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static com.github.jackl.elk.util.HttpClientUtil.getWebPage;
 
 /**
  * Created by jackl on 17-5-2.
  */
+@Component
 public class RequestClient {
+    @Autowired
+    RedisUtil redisUtil;
+    @Autowired
+    CompanyDao companyDao;
+
     public String  doRequest(String url) throws IOException{
         Map params=new HashMap<String,String>();
         params.put("name","jackl");
@@ -46,6 +45,14 @@ public class RequestClient {
         return  doPost(postUrl,params);
 
     }
+
+    public String  doGet(String url,Map params) throws IOException{
+        redisUtil.saveHashString("requests","get",url,-1);
+        companyDao.save(new Company(null,url,url));
+        return HttpClientUtil.getWebPage(url);
+    }
+
+
 
 
     public String  doPost(String url,Map params) throws IOException{
