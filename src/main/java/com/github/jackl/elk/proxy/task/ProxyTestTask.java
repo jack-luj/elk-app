@@ -3,6 +3,7 @@ package com.github.jackl.elk.proxy.task;
 
 import com.github.jackl.elk.biz.ZhiHuHttpClient;
 import com.github.jackl.elk.biz.entity.Page;
+import com.github.jackl.elk.core.service.ProxyService;
 import com.github.jackl.elk.core.util.Constants;
 import com.github.jackl.elk.proxy.ProxyPool;
 import com.github.jackl.elk.proxy.entity.Proxy;
@@ -23,9 +24,14 @@ import java.io.IOException;
 public class ProxyTestTask implements Runnable{
     private final static Logger logger = LoggerFactory.getLogger(ProxyTestTask.class);
     private Proxy proxy;
-    public ProxyTestTask(Proxy proxy){
+    private ZhiHuHttpClient zhiHuHttpClient;
+    private ProxyService proxyService;
+    public ProxyTestTask(Proxy proxy,ZhiHuHttpClient zhiHuHttpClient,ProxyService proxyService){
         this.proxy = proxy;
+        this.zhiHuHttpClient = zhiHuHttpClient;
+        this.proxyService=proxyService;
     }
+
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
@@ -38,7 +44,7 @@ public class ProxyTestTask implements Runnable{
                     setCookieSpec(CookieSpecs.STANDARD).
                     build();
             request.setConfig(requestConfig);
-            Page page = ZhiHuHttpClient.getInstance().getWebPage(request);
+            Page page = zhiHuHttpClient.getWebPage(request);
             long endTime = System.currentTimeMillis();
             String logStr = Thread.currentThread().getName() + " " + proxy.getProxyStr() +
                     "  executing request " + page.getUrl()  + " response statusCode:" + page.getStatusCode() +
@@ -55,6 +61,7 @@ public class ProxyTestTask implements Runnable{
                 ProxyPool.lock.writeLock().lock();
                 try {
                     ProxyPool.proxySet.add(proxy);
+                    proxyService.addAvailableProxy(proxy);
                 } finally {
                     ProxyPool.lock.writeLock().unlock();
                 }

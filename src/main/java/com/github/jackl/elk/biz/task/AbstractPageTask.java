@@ -31,10 +31,10 @@ public abstract class AbstractPageTask implements Runnable{
 	protected HttpRequestBase request;
 	protected boolean proxyFlag;//是否通过代理下载
 	private Proxy currentProxy;//当前线程使用的代理
-	protected static ZhiHuHttpClient zhiHuHttpClient = ZhiHuHttpClient.getInstance();
+	protected ZhiHuHttpClient zhiHuHttpClient ;
 
-	public AbstractPageTask(){
-
+	public AbstractPageTask(ZhiHuHttpClient zhiHuHttpClient){
+		this.zhiHuHttpClient=zhiHuHttpClient;
 	}
 	public AbstractPageTask(String url, boolean proxyFlag){
 		this.url = url;

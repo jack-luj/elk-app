@@ -8,6 +8,8 @@ import com.github.jackl.elk.core.util.*;
 import com.github.jackl.elk.proxy.ProxyHttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -21,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
+@Component
 public class ZhiHuHttpClient extends AbstractHttpClient implements IHttpClient {
     private static org.slf4j.Logger logger = LoggerFactory.getLogger(ZhiHuHttpClient.class);
     private volatile static ZhiHuHttpClient instance;
@@ -32,16 +34,9 @@ public class ZhiHuHttpClient extends AbstractHttpClient implements IHttpClient {
     private static long startTime = System.currentTimeMillis();
     public static volatile boolean isStop = false;
 
-    public static ZhiHuHttpClient getInstance(){
-        if (instance == null){
-            synchronized (ZhiHuHttpClient.class){
-                if (instance == null){
-                    instance = new ZhiHuHttpClient();
-                }
-            }
-        }
-        return instance;
-    }
+    @Autowired
+    private ProxyHttpClient proxyHttpClient;
+
     /**
      * 详情页下载线程池
      */
@@ -177,9 +172,9 @@ public class ZhiHuHttpClient extends AbstractHttpClient implements IHttpClient {
                     }
                 }
                 //关闭代理检测线程池
-                ProxyHttpClient.getInstance().getProxyTestThreadExecutor().shutdownNow();
+                proxyHttpClient.getProxyTestThreadExecutor().shutdownNow();
                 //关闭代理下载页线程池
-                ProxyHttpClient.getInstance().getProxyDownloadThreadExecutor().shutdownNow();
+                proxyHttpClient.getProxyDownloadThreadExecutor().shutdownNow();
 
                 break;
             }

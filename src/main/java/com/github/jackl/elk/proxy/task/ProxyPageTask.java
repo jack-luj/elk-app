@@ -3,6 +3,7 @@ package com.github.jackl.elk.proxy.task;
 
 import com.github.jackl.elk.biz.ZhiHuHttpClient;
 import com.github.jackl.elk.biz.entity.Page;
+import com.github.jackl.elk.core.service.ProxyService;
 import com.github.jackl.elk.core.util.Config;
 import com.github.jackl.elk.core.util.Constants;
 import com.github.jackl.elk.core.util.HttpClientUtil;
@@ -32,13 +33,17 @@ public class ProxyPageTask implements Runnable{
 	private boolean proxyFlag;//是否通过代理下载
 	private Proxy currentProxy;//当前线程使用的代理
 
-	protected static ProxyHttpClient proxyHttpClient = ProxyHttpClient.getInstance();
-	private ProxyPageTask(){
+	protected ProxyHttpClient proxyHttpClient;
+	private ZhiHuHttpClient zhiHuHttpClient;
+	private ProxyService proxyService;
 
-	}
-	public ProxyPageTask(String url, boolean proxyFlag){
+	public ProxyPageTask(String url, boolean proxyFlag, ProxyHttpClient proxyHttpClient, ZhiHuHttpClient zhiHuHttpClient, ProxyService proxyService){
 		this.url = url;
 		this.proxyFlag = proxyFlag;
+		this.proxyHttpClient=proxyHttpClient;
+		this.zhiHuHttpClient=zhiHuHttpClient;
+		this.proxyService=proxyService;
+
 	}
 	public void run(){
 		long requestStartTime = System.currentTimeMillis();
@@ -89,7 +94,7 @@ public class ProxyPageTask implements Runnable{
 	 * retry
 	 */
 	public void retry(){
-		proxyHttpClient.getProxyDownloadThreadExecutor().execute(new ProxyPageTask(url, Config.isProxy));
+		proxyHttpClient.getProxyDownloadThreadExecutor().execute(new ProxyPageTask(url, Config.isProxy,proxyHttpClient,zhiHuHttpClient,proxyService));
 	}
 
 	public void handle(Page page){
@@ -97,9 +102,10 @@ public class ProxyPageTask implements Runnable{
 				getProxyListPageParser(ProxyPool.proxyMap.get(url));
 		List<Proxy> proxyList = parser.parse(page.getHtml());
 		for(Proxy p : proxyList){
-			if(!ZhiHuHttpClient.getInstance().getDetailListPageThreadPool().isTerminated()){
+			proxyService.addProxy(p);//保存到redis
+			if(!zhiHuHttpClient.getDetailListPageThreadPool().isTerminated()){
 				if (!ProxyPool.proxySet.contains(p.getProxyStr())){
-					proxyHttpClient.getProxyTestThreadExecutor().execute(new ProxyTestTask(p));
+					proxyHttpClient.getProxyTestThreadExecutor().execute(new ProxyTestTask(p,zhiHuHttpClient,proxyService));
 				}
 			}
 		}
