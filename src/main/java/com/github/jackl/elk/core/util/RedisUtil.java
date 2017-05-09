@@ -47,6 +47,16 @@ public class RedisUtil {
     }
 
     /**
+     * 入队
+     *
+     * @param key
+     * @return
+     */
+    public void delete(String key) {
+        objectRedisTemplate.delete(key);
+    }
+
+    /**
      * 出队
      *
      * @param key

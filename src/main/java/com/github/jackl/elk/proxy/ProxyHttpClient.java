@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -23,7 +24,10 @@ import java.util.concurrent.TimeUnit;
 public class ProxyHttpClient extends AbstractHttpClient {
     private static final Logger logger = Logger.getLogger(ProxyHttpClient.class);
     public static Set<Page> downloadFailureProxyPageSet = new HashSet<>(ProxyPool.proxyMap.size());
-
+    @Autowired
+    ProxyService proxyService;
+    @Autowired
+    RedisUtil redisUtil;
 
     /**
      * 代理测试线程池
@@ -33,7 +37,7 @@ public class ProxyHttpClient extends AbstractHttpClient {
      * 代理网站下载线程池
      */
     private ThreadPoolExecutor proxyDownloadThreadExecutor;
-    public ProxyHttpClient(){
+    public void init(){
         initThreadPool();
         initProxy();
     }
@@ -61,7 +65,10 @@ public class ProxyHttpClient extends AbstractHttpClient {
     private void initProxy(){
         Proxy[] proxyArray = null;
         try {
-            proxyArray = (Proxy[]) HttpClientUtil.deserializeObject(Config.proxyPath);
+            List<Proxy> proxyList=proxyService.loadAvailableProxy();
+            proxyArray=new Proxy[proxyList.size()];
+            proxyList.toArray(proxyArray);
+           // proxyArray = (Proxy[]) HttpClientUtil.deserializeObject(Config.proxyPath);
             int usableProxyCount = 0;
             for (Proxy p : proxyArray){
                 if (p == null){
@@ -110,7 +117,7 @@ public class ProxyHttpClient extends AbstractHttpClient {
                 }
             }
         }).start();
-        new Thread(new ProxySerializeTask()).start();
+        new Thread(new ProxySerializeTask(proxyService)).start();
     }
     public ThreadPoolExecutor getProxyTestThreadExecutor() {
         return proxyTestThreadExecutor;

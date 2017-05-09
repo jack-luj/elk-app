@@ -2,6 +2,7 @@ package com.github.jackl.elk.proxy.task;
 
 
 import com.github.jackl.elk.biz.ZhiHuHttpClient;
+import com.github.jackl.elk.core.service.ProxyService;
 import com.github.jackl.elk.core.util.Config;
 import com.github.jackl.elk.core.util.HttpClientUtil;
 import com.github.jackl.elk.proxy.ProxyPool;
@@ -15,6 +16,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ProxySerializeTask implements Runnable{
     private static org.slf4j.Logger logger = LoggerFactory.getLogger(ProxyPageTask.class);
+    private ProxyService proxyService;
+
+    public ProxySerializeTask(ProxyService proxyService) {
+        this.proxyService = proxyService;
+    }
+
     @Override
     public void run() {
         while (!ZhiHuHttpClient.isStop){
@@ -37,7 +44,14 @@ public class ProxySerializeTask implements Runnable{
                 ProxyPool.lock.readLock().unlock();
             }
 
-            HttpClientUtil.serializeObject(proxyArray, Config.proxyPath);
+            //删除原有
+            //写入新的
+            proxyService.cleanAvailableProxy();
+            for (int i = 0; i < proxyArray.length; i++) {
+                proxyService.addAvailableProxy(proxyArray[i]);
+            }
+          //  HttpClientUtil.serializeObject(proxyArray, Config.proxyPath);
+
             logger.info("成功序列化" + proxyArray.length + "个代理");
         }
     }
