@@ -2,13 +2,17 @@ group 'elk-app'
 
 buildscript {
     repositories {
-        mavenCentral()
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.+")
     }
 }
-
+allprojects {
+    repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    }
+}
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'idea'

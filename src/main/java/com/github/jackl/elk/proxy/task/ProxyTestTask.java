@@ -62,7 +62,9 @@ public class ProxyTestTask implements Runnable{
                 logger.debug(proxy.toString() + "----------代理可用--------请求耗时:" + (endTime - startTime) + "ms");
                 ProxyPool.lock.writeLock().lock();
                 try {
-                    ProxyPool.proxySet.add(proxy);
+                    if(proxy.getSuccessfulTotalTime()<=10000) {//响应在10s以上的丢弃
+                        ProxyPool.proxySet.add(proxy);
+                    }
                 } finally {
                     ProxyPool.lock.writeLock().unlock();
                 }
